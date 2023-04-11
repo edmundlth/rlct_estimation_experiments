@@ -52,7 +52,7 @@ Example:
 $ python haiku_mlp_rlct_estimate.py
 ```
 should produce the following output
-[Sample output](./sample_rlct_estimation_regression.png)
+![Sample output](./sample_rlct_estimation_regression.png)
 
 2. Commandline arguments to change the MCMC configuration
 ```
@@ -68,6 +68,7 @@ $ python haiku_mlp_rlct_estimate.py --num-training-data 3123
 ```
 $ python haiku_mlp_rlct_estimate.py --a0 -0.4 --b0 0.0 --num-training-data 5123
 ```
+![Sample output](./sample_rlct_estimation_regression2.png)
 
 4. For MLP with different architecture e.g. input dimension of 2, output dimension 1 and 2 hidden layers with size `[2, 3]` with ReLU activation
 ```
