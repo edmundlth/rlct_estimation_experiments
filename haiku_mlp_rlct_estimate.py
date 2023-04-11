@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import jax
 import jax.numpy as jnp
@@ -126,18 +127,24 @@ def main(args):
     ax.set_ylabel("Expected NLL")
     n = args.num_training_data
     ax.set_title(f"n={n}, L_n={intercept / n:.3f}")
-    plt.show()
+    if args.show_plot:
+        plt.show()
+    
+    if args.output_dir:
+        os.makedirs(args.output_dir, exist_ok=True)
+        fig.savefig(os.path.join(args.output_dir, "plot.png"))
+
     return
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="RLCT estimation of MLP models.")
-    parser.add_argument("--num-itemps", nargs="?", default=6, type=int)
-    parser.add_argument("--num-posterior-samples", nargs="?", default=2000, type=int)
-    parser.add_argument("--thinning", nargs="?", default=1, type=int)
-    parser.add_argument("--num-warmup", nargs="?", default=1000, type=int)
-    parser.add_argument("--num-chains", nargs="?", default=1, type=int)
-    parser.add_argument("--num-training-data", nargs="?", default=1032, type=int)
+    parser.add_argument("--num-itemps", nargs="?", default=6, type=int, help="Number of inverse temperature values (centered aroudn 1/log(n)) to be used in the regression for RLCT estimation.")
+    parser.add_argument("--num-posterior-samples", nargs="?", default=2000, type=int, help="Number of posterior samples drawn in each MCMC chain.")
+    parser.add_argument("--thinning", nargs="?", default=2, type=int, help="Thinning factor for MCMC sampling.")
+    parser.add_argument("--num-warmup", nargs="?", default=1000, type=int, help="Number of samples discarded at the begining of each MCMC chain, a.k.a. burn in. ")
+    parser.add_argument("--num-chains", nargs="?", default=4, type=int, help="Number of independent MCMC chains to run. This will set the number of compute devices used as well.")
+    parser.add_argument("--num-training-data", nargs="?", default=1032, type=int, help="Size of the randomly generated training data set.")
     parser.add_argument("--a0", nargs="+", default=[0.5], type=float)
     parser.add_argument("--b0", nargs="+", default=[0.9], type=float)
     parser.add_argument("--input_dim", nargs="?", default=1, type=int, help="Dimension of the input data X.")
@@ -159,7 +166,9 @@ if __name__ == "__main__":
         type=str,
         help="a directory for storing output files.",
     )
-    parser.add_argument("--plot_posterior_samples", action="store_true", default=False)
+    parser.add_argument(
+        "--show_plot", action="store_true", default=True, help="Do plt.show()"
+    )
     parser.add_argument(
         "--quiet", action="store_true", default=False, help="Lower verbosity level."
     )
